@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"mapreduce"
 	"os"
+	"strings"
+	"unicode"
+	"strconv"
 )
 
 //
@@ -13,7 +16,25 @@ import (
 // and look only at the contents argument. The return value is a slice
 // of key/value pairs.
 //
+func shouldSplit(word rune) bool {
+	if !unicode.IsLetter(word) {
+		return true
+	}
+	return false
+}
+
 func mapF(filename string, contents string) []mapreduce.KeyValue {
+	wordCount := make(map[string]int)
+	kvs := []mapreduce.KeyValue{}
+
+	words := strings.FieldsFunc(contents, shouldSplit)
+	for _, word := range words {
+		wordCount[word] = wordCount[word] + 1
+	}
+	for word, count := range wordCount {
+		kvs = append(kvs, mapreduce.KeyValue{Key: word, Value: strconv.Itoa(count)})
+	}
+	return kvs
 	// Your code here (Part II).
 }
 
@@ -24,6 +45,18 @@ func mapF(filename string, contents string) []mapreduce.KeyValue {
 //
 func reduceF(key string, values []string) string {
 	// Your code here (Part II).
+	var sum int
+	for _, value := range values {
+		intvalue, err := strconv.Atoi(value)
+		if err != nil {
+			fmt.Println(intvalue, "is not a Itoa-compatible string")
+			continue
+		}
+
+		sum = sum + intvalue
+
+	}
+	return strconv.Itoa(sum)
 }
 
 // Can be run in 3 ways:

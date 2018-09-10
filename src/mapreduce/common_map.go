@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"encoding/json"
-	"fmt"
 )
 
 func doMap(
@@ -74,7 +73,6 @@ func doMap(
 		_ = enc.Encode(&kv)
 		outFile.Close()
 	}
-	fmt.Println(len(reduceFiles), nReduce)
 }
 
 func ihash(s string) int {
